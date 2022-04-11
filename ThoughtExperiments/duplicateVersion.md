@@ -41,4 +41,3 @@ Ammendment: The voting takes place not over 1 block, but over n blocks. Outcome 
 Alternatively, an update may occur upon reaching a preset amount of conCURRENCY as opposed to a set amount of blocks to vote during. If update is not popular, it will not be approved before a different update. Is conCURRENCY backing constant or proportional to total conCURRENCY?
 
 VOTE transaction contains conCURRENCY source addresses and the hash of the update proposal.
-

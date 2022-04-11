@@ -31,4 +31,25 @@ Blocks are limited to 100 kb each, and aim to be mined once every minute on aver
 ### 3.2 Body
 The body consists of transactions separated by a blank line. New lines are notated by the linefeed character, "\n".
 
-## 4. Messages
+## 4. Transactions
+
+## 5. Messages
+All messages are sent over TCP/IP.
+
+### 5.1 GET_PEERS
+When the sender sends this message to a conCURRENCY node, the receiving node should respond with a list of ip addresses that correspond to its peers on the conCURRENCY network.
+
+### 5.2 PEERS
+The response to GET_PEERS containing the list of IP addresses.
+
+### 5.3 UPDATE_CHAIN
+When a node receives an UPDATE_CHAIN message with a chain that follows all protocol rules, and is longer than the chain that the node is currently working with, the node should adopt the new chain and forward it on to all other neighbors with an UPDATE_CHAIN message.
+
+If the chain is not longer than the node's current chain, or it violates any rules, the receiver should disregard the message.
+
+### 5.4 PUT_TRANSACTION
+When a user wishes to add a transaction to the mempool, they send a PUT_TRANSACTION message to all neighbors.
+
+This transaction must contain valid addresses and proper authorization (including secret key signing).
+
+When a node receives a PUT_TRANSACTION message that is not currently in its local mempool, the node should store that transaction and send the PUT_TRANSACTION to all other neighbors.
