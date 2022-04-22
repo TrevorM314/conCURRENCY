@@ -42,10 +42,10 @@ When the sender sends this message to a conCURRENCY node, the receiving node sho
 ### 5.2 PEERS
 The response to GET_PEERS containing the list of IP addresses.
 
-### 5.3 UPDATE_CHAIN
-When a node receives an UPDATE_CHAIN message with a chain that follows all protocol rules, and is longer than the chain that the node is currently working with, the node should adopt the new chain and forward it on to all other neighbors with an UPDATE_CHAIN message.
+### 5.3 PUT_BLOCK
+When a node receives an PUT_BLOCK message with a block that follows all protocol rules, and points to the previously most recent block, the receiving node should update its cached chain and forward the PUT_BLOCK message to all other neighbors
 
-If the chain is not longer than the node's current chain, or it violates any rules, the receiver should disregard the message.
+If the new block does not point to the most recent block, or if it violates any rules, the receiver should disregard the message.
 
 ### 5.4 PUT_TRANSACTION
 When a user wishes to add a transaction to the mempool, they send a PUT_TRANSACTION message to all neighbors.
@@ -53,3 +53,7 @@ When a user wishes to add a transaction to the mempool, they send a PUT_TRANSACT
 This transaction must contain valid addresses and proper authorization (including secret key signing).
 
 When a node receives a PUT_TRANSACTION message that is not currently in its local mempool, the node should store that transaction and send the PUT_TRANSACTION to all other neighbors.
+
+### 5.5 GET_CHAIN
+
+### 5.5 CHAIN
