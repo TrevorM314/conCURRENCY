@@ -2,6 +2,7 @@ CHAIN
 version: 0
 length: 2
 
-{
-    
-}
+*1st block, up to 100kb*
+NEXT BLOCK
+*next block*
+END CHAIN

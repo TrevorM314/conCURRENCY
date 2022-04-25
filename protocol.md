@@ -6,7 +6,8 @@
 [1. Overview](#1-overview)\
 [2. Protocol Updates](#2-protocol-updates)\
 [3. Block Structure](#3-block-structure)\
-[4. Messages](#4-messages)
+[4. Transactions](#4-transactions)\
+[5. Messages](#5-messages)
 
 ## 1. Overview
 conCURRENCY is a blockchain protocol engineered toward preventing hard forks in the face of policy-chaning updates. It does so by preparing for a branch, in which the new protocol version is aware of the former protocol and accepts blocks that are mined on the proper branch.
@@ -27,11 +28,24 @@ Blocks are limited to 100 kb each, and aim to be mined once every minute on aver
     An arbitrary field used for proof of work
 5. difficulty: int, 1 byte\
     The number of leading zeros required for the *next* hash to contain for the block to be accepted
+6. miner: 32 bytes\
+    The address of the miner's conCURRENCY account
 
 ### 3.2 Body
 The body consists of transactions separated by a blank line. New lines are notated by the linefeed character, "\n".
 
 ## 4. Transactions
+
+### 4.1 Inputs
+A list of addresses used to supply the transaction with conCURRENCY. The transaction will take all of the available funds, so any remainder should be directed back to an address as an output. Any remaining conCURRENCY not attributed to an output address will be granted to the block miner as a reward.
+
+### 4.2 Outputs
+Each output contains both the address of the recipient and the amount of conCURRENCY being sent to the address.
+
+Format:\
+address: amount
+address: amount
+
 
 ## 5. Messages
 All messages are sent over TCP/IP.
