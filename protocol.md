@@ -7,7 +7,8 @@
 [2. Protocol Updates](#2-protocol-updates)\
 [3. Block Structure](#3-block-structure)\
 [4. Transactions](#4-transactions)\
-[5. Messages](#5-messages)
+[5. Messages](#5-messages)\
+[6. Version Updates](#6-version-updates)\
 
 ## 1. Overview
 conCURRENCY is a blockchain protocol engineered toward preventing hard forks in the face of policy-chaning updates. It does so by preparing for a branch, in which the new protocol version is aware of the former protocol and accepts blocks that are mined on the proper branch.
@@ -88,3 +89,9 @@ When a node hopes to start out and get the blockchain, it sends this message to 
 
 ### 5.5 CHAIN
 This message is sent in response to the GET_CHAIN message. It contains a list of all blocks on the chain.
+
+
+## 6. Version Updates
+In order for a new version of conCURRENCY to be initiated, there must occur a vote on the blockchain.
+
+Votes are special transactions on a block in which an input address is linked to the sha-256 hash of a conCURRENCY update proposal. Any conCURRENCY used to vote with will be tied up until the end of the voting period, in which case it will be freed for the voter to then make other transactions with.
