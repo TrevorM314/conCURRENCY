@@ -1,0 +1,2 @@
+GET_PEERS
+version: 0
