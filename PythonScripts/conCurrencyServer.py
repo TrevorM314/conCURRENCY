@@ -34,6 +34,23 @@ class BlockChain:
         print(printList)
 
 
+# Will want a length field along with a data field
+# This will be so the translation into bytes can be known with how many bytes are a part of each block.
+# Use a VarInt to encode the length of the data field
+# Find out how Bitcoin or Ethereum does this to match them.
+
+# How to mine a block
+# Difficulty is how many zeros need to be in the front of the hash
+    # Changing this difficulty makes something twice as easy or twice as hard.
+    # But we don't want this so heres how to get around it.
+# n#0s -> <= 2^(256-2)
+# x <= 2^(256-2) -> d(n)
+# X <= d(n)
+# d(n+1) = d(n) * delta
+# delta for bitcoin = (time for last 2016 blocks) / (2016 * 10 minutes)
+# straight up less then or equal against the difficulty level.
+# To mine this and do the rehashing you use the nonce and edit that to find the proper value to be less then the difficulty level.
+
 class block:
     previousHash = ""
     transactions = ""
