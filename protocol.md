@@ -19,7 +19,7 @@ At the core of the conCURRENCY protocol is the need for previous versions to pay
 Blocks are limited to 100 kb each, and aim to be mined once every minute on average.
 
 ### 3.1 Header Fields
-1. hash: string, 32 bytes\
+1. hash: 32 bytes\
     A sha-256 hash of the previous block on the blockchain
 2. version: int, 4 bytes
 3. time: int, 4 bytes\
@@ -44,22 +44,34 @@ Each output contains both the address of the recipient and the amount of conCURR
 
 Format:\
 address: amount
-address: amount
 
 
 ## 5. Messages
-All messages are sent over TCP/IP.
+All messages are sent over TCP/IP. All headers are encoded as ASCII characters. The body of messages may either be ASCII characters or raw data, depending on the type.\
+The first line of a message contains the message type.\
+The next line contains the version number header (e.g. "version: 0").\
+The following lines contain any other headers needed for the given message type\
+After all the headers, the next line is empty, followed by the start of the message body.
 
 ### 5.1 GET_PEERS
 When the sender sends this message to a conCURRENCY node, the receiving node should respond with a list of ip addresses that correspond to its peers on the conCURRENCY network.
 
+**body**: a list of IPv4 addresses in dot-decimal notation separated by a newline character, "\n." For example, 192.0.2.12.\
+body encoding: ASCII
+
 ### 5.2 PEERS
-The response to GET_PEERS containing the list of IP addresses.
+A node should send this in response to a GET_PEERS message to the requesting node. This message contains a list of IP addresses of known conCURRENCY nodes.
+
+**body:** the list of IPv4 addresses separated by a newline character.\
+body encoding: ASCII
 
 ### 5.3 PUT_BLOCK
 When a node receives an PUT_BLOCK message with a block that follows all protocol rules, and points to the previously most recent block, the receiving node should update its cached chain and forward the PUT_BLOCK message to all other neighbors
 
 If the new block does not point to the most recent block, or if it violates any rules, the receiver should disregard the message.
+
+**body:** a legal block containing all of the necessary information.\
+body encoding: Raw binary (should be parsed using the rules of the block structure)
 
 ### 5.4 PUT_TRANSACTION
 When a user wishes to add a transaction to the mempool, they send a PUT_TRANSACTION message to all neighbors.
@@ -68,6 +80,11 @@ This transaction must contain valid addresses and proper authorization (includin
 
 When a node receives a PUT_TRANSACTION message that is not currently in its local mempool, the node should store that transaction and send the PUT_TRANSACTION to all other neighbors.
 
+**Body:** A legal conCURRENCY transaction\
+Body encoding: ASCII
+
 ### 5.5 GET_CHAIN
+When a node hopes to start out and get the blockchain, it sends this message to its neighbors to obtain it. The node should send this message to multiple neighbors in order to validate the chain.
 
 ### 5.5 CHAIN
+This message is sent in response to the GET_CHAIN message. It contains a list of all blocks on the chain.
