@@ -1,7 +1,10 @@
 # Authors: Matthew Bouch and Trevor Mitchell
+# Guide Link: https://medium.com/codex/make-a-client-talk-to-a-local-server-with-python-socket-programming-1-9be3cb4b474
 
 import hashlib
 import time
+import socket
+import sys
 
 
 class BlockChain:
@@ -62,37 +65,45 @@ class block:
 
 
 def main():
+    # Create a TCP/IP socket
+    sock = socket.socket()
+
+    # Set a port for the socket
+    port = 5001
+
+    # Bind the socket to the port
+    sock.bind(('', port))
+
+    # Listen for incoming connections
+    sock.listen(5)
+
+    print("server is listening on port: " + str(port))
+
     # Create the conCurrency blockchain
     conCurrency = BlockChain()
 
-    # My local current version of the blockchain
-    currentVersion = 0
+    while True:
+        # Wait for a connection
+        connection, addr = sock.accept()
 
-    # Display the hash of the genesis block
-    print(conCurrency.getLatestHash())
+        # Send a hello message to the client
+        message = "Hello Client"
+        connection.send(message.encode("utf-8"))
 
-    # Create a new block on version 0
-    conCurrency.createBlock(currentVersion, conCurrency.getLatestHash(), ["Trevor sent Bouch 5 conCurrency\n Bouch sent Trevor 2 conCurrency"], "Version 0 Block 1")
+        # Now wait for the client to send a message to us about a block
+        data = connection.recv(1024)
+        data = data.decode("utf-8")
+        data = data.split(",")
+        print(data)
 
-    # Display the hash of the new block
-    print(conCurrency.getLatestHash())
+        conCurrency.createBlock(int(data[0]), conCurrency.getLatestHash(), data[1], ("Version " + str(int(data[0])) + " Block 1"))
 
-    # Now lets update the blockchain to version 1
-    conCurrency.updateVersion()
+        # Shut down the connection
+        print("Shutting Down!")
+        connection.close()
+        break
 
-    # We will also update the version we are working on to version 1
-    currentVersion = 1
-
-    # Display the hash of the new block
-    print(conCurrency.getLatestHash())
-
-    # Create a new block on version 1
-    conCurrency.createBlock(currentVersion, conCurrency.getLatestHash(), ["Bouch sent Joey 5 conCurrency\n Trevor sent Dr. Geisler 1000 conCurrency"], "Version 1 Block 1")
-
-    #Create a new block on version 1
-    conCurrency.createBlock(currentVersion, conCurrency.getLatestHash(), ["Joey sent Bouch 1 conCurrency\n Dr. Geisler sent Trevor 5 conCurrency"], "Version 1 Block 2")
-
-    # Display the blockchain
     conCurrency.displayBlockChain()
+
 
 main()
