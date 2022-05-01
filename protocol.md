@@ -8,7 +8,7 @@
 [3. Block Structure](#3-block-structure)\
 [4. Transactions](#4-transactions)\
 [5. Messages](#5-messages)\
-[6. Version Updates](#6-version-updates)\
+[6. Version Updates](#6-version-updates)
 
 ## 1. Overview
 conCURRENCY is a blockchain protocol engineered toward preventing hard forks in the face of policy-chaning updates. It does so by preparing for a branch, in which the new protocol version is aware of the former protocol and accepts blocks that are mined on the proper branch.
@@ -95,3 +95,19 @@ This message is sent in response to the GET_CHAIN message. It contains a list of
 In order for a new version of conCURRENCY to be initiated, there must occur a vote on the blockchain.
 
 Votes are special transactions on a block in which an input address is linked to the sha-256 hash of a conCURRENCY update proposal. Any conCURRENCY used to vote with will be tied up until the end of the voting period, in which case it will be freed for the voter to then make other transactions with.
+
+### 6.1 conCURRENCY Update Proposals
+conCURRENCY Update Proposals (CUPs) are protocol updates where a fork would occur if it were adopted. In other words, a CUP is an update to the conCURRENCY protocl that either restricts or broadens the qualifications of a legal block. While other non-forking updates may occur, they are not CUPs.
+
+A CUPs proposal period begins when it receives its first votes on the blockchain. No 2 CUPs may receive their first votes on the same block, although votes of existing CUPs may exist on the same block as a CUP beginning its proposal period.
+
+Each proposal period lasts for 100 blocks, including the intial block, during which time people may vote on whether to accept or reject an update. If majority of the votes (> 50% of conCURRENCY voted with) are in favor of adopting the update, then the update is adopted, and a forked chain is created with the next version number. From that point on, the chain on which the update was adopted will no longer accept any CUPs, even if they were mid-proposal period and ended with majority in favor.
+
+### 6.2 Vote Transaction
+A vote transaction differs slightly from regular transactions.
+
+First, the conCURRENCY amount is provided as an argument to the *input* rather than the output. That amount is considered frozen in the account, and cannot be used to spend with until after the proposal period for the voted CUP is finished.\
+
+Second, a vote transaction does not contain an output field, but rather a CUP field, containing the hash of a CUP document.
+
+Vote transactions may contain multiple inputs, but only one CUP hash.
