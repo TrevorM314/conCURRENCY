@@ -6,6 +6,8 @@ import time
 import socket
 import sys
 
+from pyparsing import And
+
 
 class BlockChain:
     blockChain = [[]]
@@ -13,6 +15,7 @@ class BlockChain:
     def __init__(self):
         self.blockChain = [[]]
         self.createBlock(self.version, "Genesis", [], "Genesis")
+        self.difficulty = ((2**256) / 2)
     
     def createBlock(self, version, previousHash, transactions, blockName):
         self.blockChain[version].append(block(previousHash, transactions, blockName, version))
@@ -33,6 +36,13 @@ class BlockChain:
                 printList[i].append(self.blockChain[i][j].blockName)
         print(printList)
 
+    def isNewBlockValid(self, newBlock):
+        tmp1 = int(newBlock.blockHash, base=16)
+        tmp2 = self.difficulty
+        if tmp1 <= tmp2:
+            return True
+        else:
+            return False
 
 # Will want a length field along with a data field
 # This will be so the translation into bytes can be known with how many bytes are a part of each block.
@@ -61,21 +71,21 @@ class block:
     miner_address = "0"
     time_of_creation = None
     blockName = ""
-    def __init__(self, previousHash, transactions, blockName, version):
+    def __init__(self, previousHash, transactions, blockName, version, nonce=0):
         # add all strings in list transactions to a string
         self.previousHash = previousHash
         self.transactions = transactions
-        self.blockHash = self.calculateHash()
         self.blockName = blockName
         self.version = version
-        self.nonce = 0
+        self.nonce = nonce
         self.difficulity = 0
         self.miner_address = "0"
         self.time_of_creation = time.time()
+        self.blockHash = self.calculateHash()
 
     def calculateHash(self):
         # add all strings in list transactions to a string
-        blockString = self.previousHash + str(self.transactions)
+        blockString = self.previousHash + str(self.transactions) + str(self.nonce)
         # hash the string
         blockHash = hashlib.sha256(blockString.encode()).hexdigest()
         return blockHash
@@ -113,12 +123,37 @@ def main():
         data = data.split(",")
         print(data)
 
+        hashVal1 = int(conCurrency.getLatestHash(), base=16)
+        print("Hash Val 1: " + str(hashVal1))
+
         conCurrency.createBlock(int(data[0]), conCurrency.getLatestHash(), data[1], ("Version " + str(int(data[0])) + " Block 1"))
+
+        hashVal2 = int(conCurrency.getLatestHash(), base=16)
+        print("Hash Val 2: " + str(hashVal2))
+
 
         # Shut down the connection
         print("Shutting Down!")
         connection.close()
         break
+
+    
+    # We can now try to mine a block
+    # We can mine a block by finding a hash that is less then the difficulty level
+    #! previousHash, transactions, blockName, version, nonce=0
+    result = False
+    transactions = "I pay Dr. Geisler 5 conCurrency"
+    versionStr = "Version " + str(int(conCurrency.version))
+    nonce = 0
+    while result == False and nonce < 10:
+        myBlock = block(conCurrency.getLatestHash(), transactions, versionStr, conCurrency.version, nonce)
+        print("Nonce: " + str(nonce))
+        print("My Block's Value: " + str(int(myBlock.blockHash, base=16)))
+        print("Current Difficulty: " + str(conCurrency.difficulty))
+        result = conCurrency.isNewBlockValid(myBlock)
+        if result == False:
+            nonce += 1
+        print("Result: " +  str(result))
 
     conCurrency.displayBlockChain()
 
