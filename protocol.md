@@ -90,6 +90,11 @@ When a node hopes to start out and get the blockchain, it sends this message to 
 ### 5.5 CHAIN
 This message is sent in response to the GET_CHAIN message. It contains a list of all blocks on the chain.
 
+CHAIN messages contain a "length" header indicating how many blocks are in the body of the message.
+
+**Body:** Binary data of a blocks separated by a line that contains "NEXT BLOCK". The final block is followed by a line containing "END CHAIN".\
+Body encoding: Mixture of binary and ASCII
+
 
 ## 6. Version Updates
 In order for a new version of conCURRENCY to be initiated, there must occur a vote on the blockchain.
@@ -103,11 +108,20 @@ A CUPs proposal period begins when it receives its first votes on the blockchain
 
 Each proposal period lasts for 100 blocks, including the intial block, during which time people may vote on whether to accept or reject an update. If majority of the votes (> 50% of conCURRENCY voted with) are in favor of adopting the update, then the update is adopted, and a forked chain is created with the next version number. From that point on, the chain on which the update was adopted will no longer accept any CUPs, even if they were mid-proposal period and ended with majority in favor.
 
+A CUP must follow the format of a string of ASCII characters.
+
 ### 6.2 Vote Transaction
 A vote transaction differs slightly from regular transactions.
 
-First, the conCURRENCY amount is provided as an argument to the *input* rather than the output. That amount is considered frozen in the account, and cannot be used to spend with until after the proposal period for the voted CUP is finished.\
+First, the conCURRENCY amount is provided as an argument to the *input* rather than the output. That amount is considered frozen in the account, and cannot be used to spend with until after the proposal period for the voted CUP is finished.
 
 Second, a vote transaction does not contain an output field, but rather a CUP field, containing the hash of a CUP document.
 
 Vote transactions may contain multiple inputs, but only one CUP hash.
+
+**Example:**\
+inputs\
+41B517C5B1EFDB4252B447B945FA10EA4BC4C468CC7B5635E4AB7719D4854385: 3.9
+044CDF1BA255FB78E6419F146C22265F07E4466D1515FB2E06259CFD739D2323: 2\
+CUP\
+E5D5EFC9DC8528568A7A8BE28027888BE77C3EFF731B9977A2432DFEC2AD7AD3

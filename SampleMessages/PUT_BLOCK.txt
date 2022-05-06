@@ -1,2 +1,4 @@
-UPDATE_CHAIN
+PUT_BLOCK
 version: 0
+
+*Binary data containing a conCURRENCY block*
